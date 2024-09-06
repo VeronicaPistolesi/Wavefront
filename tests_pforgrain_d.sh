@@ -4,6 +4,5 @@
 #SBATCH -o ./output_pforgrain_d.log
 #SBATCH -e ./error_pforgrain_d.log
 #SBATCH -t 02:00:00
-#SBATCH -j test_pforgrain_d
 
 python tests_pforgrain_d.py
