@@ -21,7 +21,7 @@ param_combinations_exec_3 = list(itertools.product(
 def run_command(command):
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        output_lines = result.stdout.strip().split('\n')
+        output_lines = result.stdout.strip().split('\n')[::2]
         times = []
         
         for line in output_lines:

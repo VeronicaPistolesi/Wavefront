@@ -5,24 +5,26 @@ import itertools
 
 folder_path = './build'  
 
-param_grid_exec_3 = {
-    'N': [10000],   
-    'n_workers': [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32],
-    'chunks_per_worker': [5, 20, 100]
+
+param_grid_mpi = {
+    'n_workers': [2, 3, 4, 5, 6, 7, 8],
+    'N': [10, 100, 1000, 2000, 3000, 5000],
+    'threads': [1, 2]
 }
 
-param_grid_exec_3['n_workers']=param_grid_exec_3['n_workers'][::-1]
 
-param_combinations_exec_3 = list(itertools.product(
-    param_grid_exec_3['N'],
-    param_grid_exec_3['n_workers'],
-    param_grid_exec_3['chunks_per_worker']
+param_combinations_mpi = list(itertools.product(
+    param_grid_mpi['n_workers'],
+    param_grid_mpi['N'],
+    param_grid_mpi['threads']
 ))
 
 
-def run_command(command):
+def run_command(command, threads_per_node):
     try:
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        env = os.environ.copy()
+        env['OMP_NUM_THREADS'] = str(threads_per_node)
+        result = subprocess.run(command, capture_output=True, text=True, check=True, env=env)
         output_lines = result.stdout.strip().split('\n')[::2]
         times = []
         
@@ -46,32 +48,31 @@ def run_command(command):
 
 results = []
 
-csv_headers = ['file_name', 'N', 'n_workers', 'chunks_per_worker'] + [f'time{i}' for i in range(10)] + ['mean_time']
+csv_headers = ['file_name', 'N', 'n_workers', 'threads'] + [f'time{i}' for i in range(10)] + ['mean_time']
 
 for file_name in os.listdir(folder_path):
     executable = os.path.join(folder_path, file_name.replace('.cpp', ''))
-
-    if 'grain' in file_name:
-        param_combinations = param_combinations_exec_3
-        for params in param_combinations:
+    
+    if 'new' in file_name:
+        for params in param_combinations_mpi:
             times = []
-            for _ in range(1):
-                command = [executable] + list(map(str, params))
-                time = run_command(command)
+            for _ in range(1):  
+                command = ['mpiexec', '-n', str(params[0]), executable, str(params[1])]
+                time = run_command(command, str(params[2]))
                 if time is not None:
                     times.append(time)
             
             mean_time = sum(times)/len(times) if times else None
             result_row = [
                 file_name,
-                params[0],  # N
-                params[1],  # n_workers
-                params[2],  # chunks_per_worker
+                params[1],  # N
+                params[0],  # n_workers
+                params[2]   # threads
             ] + times + [mean_time]
             print(result_row, flush=True)
             results.append(result_row)
 
-csv_file = 'tests_pforgrain_d.csv'
+csv_file = 'tests_mpi_new.csv'
 with open(csv_file, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(csv_headers)

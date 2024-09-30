@@ -52,6 +52,7 @@ int main (int argc, char *argv[]) {
     wavefront(M1, M2, N, num_workers);
     STOP(timer, elapsed);
     std::cout << "Elapsed time: " << elapsed << " usec" << std::endl;
+    std::cout << "cell:" << M1[N-1] << std::endl;
 
     if(N < 10){
         // print the matrix

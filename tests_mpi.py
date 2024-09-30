@@ -25,7 +25,7 @@ def run_command(command, threads_per_node):
         env = os.environ.copy()
         env['OMP_NUM_THREADS'] = str(threads_per_node)
         result = subprocess.run(command, capture_output=True, text=True, check=True, env=env)
-        output_lines = result.stdout.strip().split('\n')
+        output_lines = result.stdout.strip().split('\n')[::2]
         times = []
         
         for line in output_lines:
@@ -53,7 +53,7 @@ csv_headers = ['file_name', 'N', 'n_workers', 'threads'] + [f'time{i}' for i in 
 for file_name in os.listdir(folder_path):
     executable = os.path.join(folder_path, file_name.replace('.cpp', ''))
     
-    if 'mpi' in file_name:
+    if 'mpi' in file_name and 'new' not in file_name:
         for params in param_combinations_mpi:
             times = []
             for _ in range(1):  

@@ -85,6 +85,7 @@ int main (int argc, char *argv[]) {
     if(id_worker==0){
         for(int &eltime : elapsed_toprint){
             std::cout << "Elapsed time: " << eltime << " usec" << std::endl;
+            std::cout << "cell:" << M1[N-1] << std::endl;
         }
     }
 

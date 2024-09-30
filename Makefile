@@ -6,14 +6,14 @@ MPICXX = mpicxx
 
 # Flag di compilazione
 GPP_FLAGS = -O2 -pthread -I .
-MPICXX_FLAGS = -I . -fopenmp
+MPICXX_FLAGS = -O2 -I . -fopenmp
 
 # Directory di output
 BUILD_DIR = ./build
 
 # Lista dei file sorgenti
-GPP_SOURCES = sequential.cpp sequential_t.cpp fastflow_pfor.cpp fastflow_pfor_t.cpp fastflow_pforgrain.cpp fastflow_pforgrain_t.cpp 
-MPICXX_SOURCES = mpi.cpp mpi_t.cpp
+GPP_SOURCES = sequential.cpp sequential_t.cpp fastflow_pfor.cpp fastflow_pfor_t.cpp fastflow_pforgrain.cpp fastflow_pforgrain_t.cpp
+MPICXX_SOURCES = mpi.cpp mpi_t.cpp mpi_new.cpp mpi_new_t.cpp
 
 # Converte i nomi dei file sorgenti in nomi degli eseguibili nella cartella build
 GPP_TARGETS = $(GPP_SOURCES:%.cpp=$(BUILD_DIR)/%)
