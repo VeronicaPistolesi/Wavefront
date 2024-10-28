@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -26,7 +27,17 @@ inline void compute_element_transpose(std::vector<double> &M1, std::vector<doubl
     c = std::cbrt(c);
     M1[index(m, m+k, N)] = c;
     M2[index(N-(m+k)-1, N-m-1, N)] = c;
+}
 
+inline void compute_element_in_place(std::vector<double> &M, const uint64_t &m, const uint64_t &k, const uint64_t &N) {
+    double c = 0;
+    for(uint64_t i=0; i<=k; i++){
+        c += M[index(m, m+i, N)] * M[index(m+k, m+k-i, N)];
+    }
+    c = std::cbrt(c);
+    M[index(m, m+k, N)] = c;
+    // The mirrored value is also stored in the lower matrix space
+    M[index(m+k, m, N)] = c; 
 }
 
 void print_matrix(const std::vector<double> &M, const uint64_t &N) {

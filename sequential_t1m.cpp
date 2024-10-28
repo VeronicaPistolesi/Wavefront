@@ -6,55 +6,38 @@
 #include <utimer.hpp>
 #include <utils.hpp>
 #include <string>
-#include <algorithm>
-#include <ff/ff.hpp>
-#include <ff/parallel_for.hpp>
-#include <memory>
 
-void wavefront(std::vector<double> &M, uint64_t N, uint64_t num_workers) {
-    ff::ParallelFor pf;
-    
-    for (uint64_t k = 1; k < N; k++) {
 
-        pf.parallel_for(0, N-k, 1, [&](uint64_t m) {
-
+void wavefront(std::vector<double> &M, const uint64_t &N) {
+    for(uint64_t k=1; k<N; k++){
+        for(uint64_t m=0; m<N-k; m++){
             compute_element_in_place(M, m, k, N);
-
-        }, num_workers);
+        }
     }
-
-
 }
-  
 
 int main (int argc, char *argv[]) {
 
     uint64_t N = 4;  // default size of the matrix
-    uint64_t num_workers = 6; // default num workers
-
-    if(argc > 2){
+    if(argc > 1){
         N = std::stoull(argv[1]); // input size of the matrix (NxN)
-        num_workers = std::stoull(argv[2]);
     }
-  
-    // allocate the matrix
+    
     std::vector<double> M(N*N, 0);
 
-    // initialize the matrix
     for(uint64_t k=0; k<N; k++){
         M[index(k, k, N)] = double(k+1)/N;
     }
 
     START(timer);
-    // call the wavefront function
-    wavefront(M, N, num_workers);
+    wavefront(M, N);
     STOP(timer, elapsed);
     std::cout << "Elapsed time: " << elapsed << " usec" << std::endl;
     std::cout << "cell:" << M[N-1] << std::endl;
 
-    if(N < 10){
-        // print the matrix
+    if(N < 20){
         print_matrix(M, N);
     }
 
+    return 0;
 }

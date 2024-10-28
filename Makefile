@@ -12,8 +12,8 @@ MPICXX_FLAGS = -O2 -I . -fopenmp
 BUILD_DIR = ./build
 
 # Lista dei file sorgenti
-GPP_SOURCES = sequential.cpp sequential_t.cpp fastflow_pfor.cpp fastflow_pfor_t.cpp fastflow_pforgrain.cpp fastflow_pforgrain_t.cpp
-MPICXX_SOURCES = mpi.cpp mpi_t.cpp mpi_new.cpp mpi_new_t.cpp
+GPP_SOURCES = sequential.cpp sequential_t.cpp sequential_t1m.cpp fastflow_pfor.cpp fastflow_pforgrain.cpp 
+MPICXX_SOURCES = mpi.cpp mpi_w0_ll.cpp mpi_w0_async_ll.cpp mpi_w0.cpp mpi_w0_async.cpp 
 
 # Converte i nomi dei file sorgenti in nomi degli eseguibili nella cartella build
 GPP_TARGETS = $(GPP_SOURCES:%.cpp=$(BUILD_DIR)/%)
